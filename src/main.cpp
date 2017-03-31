@@ -47,9 +47,9 @@ void debugMessageOutput(QtMsgType type, const QMessageLogContext& context, const
   fflush(stdout);
 #else
   QFile logFile(logFileName);
-  logFile.open(QIODevice::WriteOnly | QIODevice::Append);
+  logFile.open(QIODevice::Text | QIODevice::Append);
   QTextStream logStream(&logFile);
-  logStream << message << "\n";
+  logStream << message;
   logFile.close();
 #endif
 
@@ -64,6 +64,13 @@ int main(int argc, char* argv[])
 
   QCoreApplication::setApplicationName("EVEBlueprints");
   QCoreApplication::setOrganizationName("Ierihon Inc.");
+
+#ifdef QT_NO_DEBUG
+  QFile logFile(logFileName);
+  logFile.open(QIODevice::Text | QIODevice::WriteOnly);
+  QTextStream logStream(&logFile);
+  logStream << "--- LOG FILE --- \n\n";
+#endif
 
   MainWindow w;
   w.show();

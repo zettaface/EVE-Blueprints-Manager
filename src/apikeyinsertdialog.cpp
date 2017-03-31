@@ -127,9 +127,11 @@ bool ApiKeyInsertDialog::ApiKeyPage::validatePage()
 
     QEventLoop loop;
     QSplashScreen splash;
-    connect(parser.data(), SIGNAL(finished(QList<eve::ApiKeyInfo*>)), this, SLOT(setKeyList(QList<eve::ApiKeyInfo*>)));
-    connect(parser.data(), SIGNAL(finished(QList<eve::ApiKeyInfo*>)), &splash, SLOT(close()));
-    connect(parser.data(), SIGNAL(finished(QList<eve::ApiKeyInfo*>)), &loop, SLOT(quit()));
+
+    connect(parser.data(), &eve::KeyInfoXmlParser::finished, this, &ApiKeyPage::setKeyList);
+//    connect(parser.data(), SIGNAL(finished(QList<ApiKeyInfo*>)), this, SLOT(setKeyList(QList<eve::ApiKeyInfo*>)));
+    connect(parser.data(), SIGNAL(finished(QList<ApiKeyInfo*>)), &splash, SLOT(close()));
+    connect(parser.data(), SIGNAL(finished(QList<ApiKeyInfo*>)), &loop, SLOT(quit()));
     eve::API.fetchKeys(keyID, vCode, parser);
 
     setEnabled(false);

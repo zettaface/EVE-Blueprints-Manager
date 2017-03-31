@@ -117,7 +117,7 @@ QWidget* BPColorDialog::makeModelPage(BPListColorModel* model)
   });
 
   connect(exportModel, &QPushButton::clicked, [model, this](bool) {
-    QString filename = QFileDialog::getSaveFileName(this, "Export", "", "YAML (*.txt)");
+    QString filename = QFileDialog::getSaveFileName(this, "Export", "", "YAML (*.yaml)");
     QFile file(filename);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
 
@@ -125,7 +125,7 @@ QWidget* BPColorDialog::makeModelPage(BPListColorModel* model)
   });
 
   connect(importModel, &QPushButton::clicked, [model](bool) {
-    QString filename = QFileDialog::getOpenFileName(nullptr, "Import", "", "YAML (*.txt)");
+    QString filename = QFileDialog::getOpenFileName(nullptr, "Import", "", "YAML (*.yaml)");
     if (filename.isNull())
       return;
 

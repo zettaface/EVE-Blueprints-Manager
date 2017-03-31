@@ -237,9 +237,8 @@ void BPListColorModel::save(QIODevice* device)
 
   YAML::Node array;
   YAML::Emitter emitter;
-  emitter << YAML::BeginSeq;
+//  emitter << YAML::BeginSeq;
 
-  QJsonArray bcs;
   for (const BlueprintColorizer& bc : data_) {
     YAML::Node bcj;
 
@@ -248,15 +247,15 @@ void BPListColorModel::save(QIODevice* device)
     bcj["filter"] = BpFilterFactory::instance().saveFiltersAsYaml(bc.filter());
     bcj["priority"] = bc.priority;
 
-    emitter << YAML::BeginMap;
+//    emitter << YAML::BeginMap;
 
-    emitter << YAML::Key << "bgcolor";
-    emitter << YAML::Value << bc.bgColor.name().toStdString();
+//    emitter << YAML::Key << "bgcolor";
+//    emitter << YAML::Value << bc.bgColor.name().toStdString();
 
-    emitter << YAML::Key << "fgcolor";
-    emitter << YAML::Value << bc.fgColor.name().toStdString();
+//    emitter << YAML::Key << "fgcolor";
+//    emitter << YAML::Value << bc.fgColor.name().toStdString();
 
-    emitter << YAML::EndMap;
+//    emitter << YAML::EndMap;
 
     array.push_back(bcj);
   }
@@ -264,30 +263,24 @@ void BPListColorModel::save(QIODevice* device)
   std::stringstream ss;
   ss << array;
 
-  qDebug() << QString::fromStdString(ss.str());
   device->write(ss.str().data());
 }
 
 bool BPListColorModel::load(QIODevice* device)
 {
-  QDataStream stream(device);
-  QByteArray data = device->readAll();
-  QJsonDocument doc = QJsonDocument::fromJson(data);
-
-  QJsonArray bcsj = doc.array();
+  YAML::Node array( YAML::Load(device->readAll().data()));
 
   beginResetModel();
   data_.clear();
 
-  for (int i = 0; i < bcsj.size(); i++) {
-    QJsonObject bcj = bcsj[i].toObject();
+  for (YAML::Node node : array) {
     BlueprintColorizer bc;
+    bc.fgColor = QColor(QString::fromStdString(node["fgColor"].as<std::string>()));
+    bc.bgColor = QColor(QString::fromStdString(node["bgColor"].as<std::string>()));
+    bc.priority = node["priority"].as<int>();
+    bc.setFilter(BpFilterFactory::instance().loadFilters(node["filter"]));
 
-    bc.fgColor = QColor(bcj["fgcolor"].toString());
-    bc.bgColor = QColor(bcj["bgcolor"].toString());
-    bc.priority = bcj["priority"].toInt();
-
-    bc.setFilter(BpFilterFactory::instance().loadFilters(bcj["filter"].toObject()));
+    data_.push_back(bc);
   }
 
   endResetModel();
