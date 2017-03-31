@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="copying">images/copying.png</file>
+        <file alias="invention">images/invention.png</file>
+        <file alias="manufacturing">images/manufacturing.png</file>
+        <file alias="researchME">images/researchMaterial.png</file>
+        <file alias="researchTE">images/researchTime.png</file>
+        <file alias="icon_64">images/Icon_64.png</file>
+    </qresource>
+</RCC>
