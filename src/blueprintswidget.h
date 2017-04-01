@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QMap>
+#include <QMenu>
 #include <QTreeView>
 #include <QCheckBox>
 #include <QGroupBox>
@@ -45,6 +46,8 @@ class BlueprintsWidget : public QWidget
   private:
     QGroupBox* makeBPGroupBox();
     void setBPColumn(int column, int state);
+    QMenu* makeLoadFiltersMenu() const;
+    void makeLoadFiltersMenu(QDir dir, QMenu* root) const;
 
     QTreeView* blueprintsView;
     QComboBox* sortComboBox;
@@ -72,7 +75,7 @@ class BlueprintsWidget : public QWidget
     void setBpModelColorized(bool colorized);
     void sortBlueprints(int);
     void saveFilter();
-    void loadFilter();
+    void loadFilter(const QString& filename);
     void onBpTabRequest(const QModelIndex& index);
     void onTabClose(int index);
 };

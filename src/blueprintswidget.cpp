@@ -1,5 +1,7 @@
 #include "blueprintswidget.h"
 
+#include <QDir>
+#include <QDirIterator>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFileDialog>
@@ -132,11 +134,17 @@ BlueprintsWidget::BlueprintsWidget(QWidget* parent) : QWidget(parent)
   filterBox = new BlueprintsFilterBoxWidget(filterTypes_t, qSharedPointerCast<BpComplexFilter>(BpFilterFactory::instance().createFilter(BpFilterFactory::Logical)), this);
   bpFilterProxy_->setFilter(filterBox->filter());
 
+  QPushButton* loadFilterBtn = new QPushButton("Load", this);
+  loadFilterBtn->setMenu(makeLoadFiltersMenu());
+
   QPushButton* saveFiltersBtn = new QPushButton("Save", this);
   connect(saveFiltersBtn, SIGNAL(clicked(bool)), this, SLOT(saveFilter()));
+  connect(saveFiltersBtn, &QPushButton::clicked, [this, loadFilterBtn](bool) {
+    QMenu* oldMenu = loadFilterBtn->menu();
+    loadFilterBtn->setMenu(makeLoadFiltersMenu());
+    oldMenu->deleteLater();
+  });
 
-  QPushButton* loadFilterBtn = new QPushButton("Load", this);
-  connect(loadFilterBtn, SIGNAL(clicked(bool)), this, SLOT(loadFilter()));
 
   QHBoxLayout* filterButtonsL = new QHBoxLayout;
   filterButtonsL->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
@@ -237,6 +245,78 @@ QGroupBox* BlueprintsWidget::makeBPGroupBox()
   return group;
 }
 
+QMenu* BlueprintsWidget::makeLoadFiltersMenu() const
+{
+  QMenu* root = new QMenu();
+
+  QAction* loadFromFileA = root->addAction("Load from file...", []() { qDebug() << "loading from file"; });
+  connect(loadFromFileA, &QAction::triggered, [this](bool) {
+    QString fileName = QFileDialog::getOpenFileName(nullptr, "Open filter", "Filters", "YAML(*.yaml)");
+
+    if (fileName.isEmpty())
+      return;
+
+    loadFilter(fileName);
+  });
+
+
+  QDir rootDir = QDir::current();
+  qDebug() << rootDir.absolutePath();
+  if (!rootDir.cd("Filters"))
+    return root;
+
+  root->addSeparator();
+  makeLoadFiltersMenu(rootDir, root);
+
+  return root;
+}
+
+void BlueprintsWidget::makeLoadFiltersMenu(QDir dir, QMenu* root) const
+{
+  QDirIterator subCatIt(dir.absolutePath(), QDir::AllDirs | QDir::NoDotAndDotDot);
+
+  while (subCatIt.hasNext()) {
+    QString fullPath = subCatIt.next();
+    QString name = subCatIt.fileName();
+    QMenu* subMenu = new QMenu(name, root);
+    qDebug() << name << fullPath;
+
+    makeLoadFiltersMenu(QDir(fullPath), subMenu);
+
+    if (subMenu->actions().size() > 0)
+      root->addMenu(subMenu);
+    else
+      subMenu->deleteLater();
+  }
+
+  QDirIterator filtersIt(dir.absolutePath(), QStringList() << "*.yaml", QDir::Files | QDir::NoDotAndDotDot );
+  while (filtersIt.hasNext()) {
+    QString fullPath = filtersIt.next();
+    QString name = filtersIt.fileInfo().completeBaseName();
+
+    QAction* action = root->addAction(name);
+    connect(action, &QAction::triggered, [this, fullPath](bool) {
+      loadFilter(fullPath);
+    });
+  }
+}
+
+void BlueprintsWidget::loadFilter(const QString& filename)
+{
+  if (filename.isEmpty())
+    return;
+
+  BpFilterFactory factory;
+  QSharedPointer<BpFilter> ptr = factory.loadFilters(YAML::LoadFile(filename.toStdString()));
+
+  if (ptr.isNull())
+    qWarning() << "NULL FILTER POINTER";
+  else {
+    filterBox->setFilter(qSharedPointerCast<BpComplexFilter>(ptr));
+    bpFilterProxy_->setFilter(ptr);
+  }
+}
+
 void BlueprintsWidget::setBPColumn(int column, int state)
 {
   bool isColumnHidden = state == Qt::Checked ? false : true;
@@ -255,6 +335,7 @@ void BlueprintsWidget::setBPColumn(int column, int state)
 
   blueprintsView->resizeColumnToContents(column);
 }
+
 
 QAbstractItemModel* BlueprintsWidget::makeBlueprintsListModel()
 {
@@ -369,7 +450,7 @@ void BlueprintsWidget::sortBlueprints(int)
 void BlueprintsWidget::saveFilter()
 {
   BpFilterFactory factory;
-  QString fileName = QFileDialog::getSaveFileName(this, "Save filter", "", "YAML(*.yaml)");
+  QString fileName = QFileDialog::getSaveFileName(this, "Save filter", "Filters", "YAML(*.yaml)");
 
   if (fileName.isEmpty())
     return;
@@ -378,23 +459,6 @@ void BlueprintsWidget::saveFilter()
   yOut << factory.saveFiltersAsYaml(filterBox->filter());
 }
 
-void BlueprintsWidget::loadFilter()
-{
-  BpFilterFactory factory;
-  QString fileName = QFileDialog::getOpenFileName(this, "Open filter", "", "YAML(*.yaml)");
-
-  if (fileName.isEmpty())
-    return;
-
-  QSharedPointer<BpFilter> ptr = factory.loadFilters(YAML::LoadFile(fileName.toStdString()));
-
-  if (ptr.isNull())
-    qWarning() << "NULL FILTER POINTER";
-  else {
-    filterBox->setFilter(qSharedPointerCast<BpComplexFilter>(ptr));
-    bpFilterProxy_->setFilter(ptr);
-  }
-}
 
 void BlueprintsWidget::onBpTabRequest(const QModelIndex& index)
 {
