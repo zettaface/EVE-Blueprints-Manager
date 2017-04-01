@@ -46,7 +46,7 @@ class BlueprintsWidget : public QWidget
     QVBoxLayout* makeOptionsBoxesLayout(QGroupBox* sortGroupBox, QGroupBox* groupingBox, QGroupBox* optionsGroupBox);
     QPushButton* makeMinimizeBpConfigButton(QWidget* bpConfigCont);
     QGroupBox* makeBlueprintsGroupingBox();
-    BpView* setupBlueprintsView();
+    BpView* setupBlueprintsView(QAbstractItemModel* model);
 
     QMenu* makeLoadFiltersMenu() const;
     void makeLoadFiltersMenu(QDir dir, QMenu* root) const;

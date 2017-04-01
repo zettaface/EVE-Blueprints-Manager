@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QHeaderView>
 
 #include <fstream>
 
@@ -17,8 +18,7 @@ BlueprintsWidget::BlueprintsWidget(QWidget* parent) : QWidget(parent)
   QWidget* bpConfigCont = makeBpConfigWidget();
   QPushButton* minimizeBpConfigBtn = makeMinimizeBpConfigButton(bpConfigCont);
 
-  blueprintsView = setupBlueprintsView();
-  blueprintsView->setModel(model);
+  blueprintsView = setupBlueprintsView(model);
 
   QWidget* bpCont = new QWidget(this);
   QVBoxLayout* bpLayout = new QVBoxLayout(bpCont);
@@ -45,8 +45,6 @@ BlueprintsWidget::BlueprintsWidget(QWidget* parent) : QWidget(parent)
   connect(bpFilterProxy_, SIGNAL(invalidated()), this, SIGNAL(modelUpdated()), Qt::QueuedConnection);
   connect(blueprintsModel, SIGNAL(modelReset()), this, SIGNAL(modelUpdated()));
   connect(blueprintsView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onBpTabRequest(QModelIndex)));
-
-  blueprintsView->resizeColumnToContents(0);
 }
 
 QAbstractItemModel* BlueprintsWidget::makeBlueprintsListModel()
@@ -310,15 +308,20 @@ QGroupBox* BlueprintsWidget::makeFiltersBox()
   return filtersGroupBox;
 }
 
-BpView* BlueprintsWidget::setupBlueprintsView()
+
+BpView* BlueprintsWidget::setupBlueprintsView(QAbstractItemModel* model)
 {
   BpView* view = new BpView(this);
+  view->setModel(model);
   view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
   view->setSelectionMode(QAbstractItemView::ContiguousSelection);
   view->setSelectionBehavior(QAbstractItemView::SelectItems);
   view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   view->setUniformRowHeights(true);
+  view->header()->setSectionResizeMode(Blueprint::Activity, QHeaderView::Fixed);
   view->setColumnWidth(Blueprint::Activity, 24);
+
+  view->resizeColumnToContents(Blueprint::Name);
 
   return view;
 }
@@ -364,9 +367,7 @@ QMenu* BlueprintsWidget::makeLoadFiltersMenu() const
     loadFilter(fileName);
   });
 
-
   QDir rootDir = QDir::current();
-  qDebug() << rootDir.absolutePath();
   if (!rootDir.cd("Filters"))
     return root;
 
@@ -384,7 +385,6 @@ void BlueprintsWidget::makeLoadFiltersMenu(QDir dir, QMenu* root) const
     QString fullPath = subCatIt.next();
     QString name = subCatIt.fileName();
     QMenu* subMenu = new QMenu(name, root);
-    qDebug() << name << fullPath;
 
     makeLoadFiltersMenu(QDir(fullPath), subMenu);
 
