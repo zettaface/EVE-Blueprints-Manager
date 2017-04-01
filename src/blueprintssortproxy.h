@@ -11,6 +11,7 @@ class BlueprintsSortProxy : public QSortFilterProxyModel
 
     int type() const;
     void setType(int type);
+    void sort(int column);
 
     enum Type
     {
@@ -22,12 +23,15 @@ class BlueprintsSortProxy : public QSortFilterProxyModel
       TE,
       Color
     };
+  public slots:
+    void setSortOrder(Qt::SortOrder order) { order_ = order; }
 
   protected:
     bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
   private:
-    int type_;
+    int type_ { Name };
+    Qt::SortOrder order_ { Qt::AscendingOrder };
 
     bool colorLess(const QModelIndex& source_left, const QModelIndex& source_right) const;
     bool numericLess(int column, const QModelIndex& source_left, const QModelIndex& source_right) const;

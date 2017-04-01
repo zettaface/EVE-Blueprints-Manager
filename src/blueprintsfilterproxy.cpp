@@ -15,7 +15,7 @@ BlueprintsFilterProxy::BlueprintsFilterProxy(QObject* parent) :
 
 bool BlueprintsFilterProxy::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
-  if (filter_ == nullptr)
+  if (filter_.isNull())
     return true;
 
   QModelIndex index = sourceModel()->index(source_row, 0, source_parent);

@@ -20,6 +20,7 @@
 #include "blueprintsemptygroupsfilter.h"
 #include "blueprintscolumnfilter.h"
 #include "blueprintsfilterboxwidget.h"
+#include "bpview.h"
 
 class BlueprintsWidget : public QWidget
 {
@@ -31,45 +32,45 @@ class BlueprintsWidget : public QWidget
     BlueprintList* model() const { return blueprintsModel; }
     BlueprintListColorizeProxyModel* colorModel() { return bpColorizer; }
 
-    void clearCache() {
-      bpColorizer->clearCache();
-      bpDecorationsProxy->clearCache();
-      bpAggregationProxy_->clearCache();
-    }
-
+    void clearCache();
     QString aggregationInfo() const;
 
   signals:
     void modelUpdated();
 
-  public slots:
   private:
-    QGroupBox* makeBPGroupBox();
-    void setBPColumn(int column, int state);
+    QWidget* makeBpConfigWidget();
+    QGroupBox* makeOptionsBox();
+    QGroupBox* makeSortBox();
+    QGroupBox* makeFiltersBox();
+    QVBoxLayout* makeOptionsBoxesLayout(QGroupBox* sortGroupBox, QGroupBox* groupingBox, QGroupBox* optionsGroupBox);
+    QPushButton* makeMinimizeBpConfigButton(QWidget* bpConfigCont);
+    QGroupBox* makeBlueprintsGroupingBox();
+    BpView* setupBlueprintsView();
+
     QMenu* makeLoadFiltersMenu() const;
     void makeLoadFiltersMenu(QDir dir, QMenu* root) const;
 
+    QAbstractItemModel* makeBlueprintsListModel();
+    void setBPColumn(int column, int state);
+    void installBpProxy(QAbstractProxyModel* model);
+
     QTreeView* blueprintsView;
-    QComboBox* sortComboBox;
-    QComboBox* sortOrderComboBox;
     TabWidget* tabWidget;
 
     QMap<int, QCheckBox*> groupingCheckBoxes;
 
-    BlueprintList* blueprintsModel;
-    BlueprintListColorizeProxyModel* bpColorizer;
-    BlueprintsFilterProxy* bpFilterProxy_;
-    BlueprintsEmptyGroupsFilter* bpEmptyGroupsProxy_;
-    BlueprintsDecorationProxy* bpDecorationsProxy;
-    BlueprintsAggregationProxy* bpAggregationProxy_;
-    BlueprintsSortProxy* bpSortProxy_;
-    BlueprintsColumnFilter* bpColumnFilter_;
+    BlueprintList* blueprintsModel { nullptr };
+    BlueprintListColorizeProxyModel* bpColorizer { nullptr };
+    BlueprintsFilterProxy* bpFilterProxy_ { nullptr };
+    BlueprintsEmptyGroupsFilter* bpEmptyGroupsProxy_ { nullptr };
+    BlueprintsDecorationProxy* bpDecorationsProxy { nullptr };
+    BlueprintsAggregationProxy* bpAggregationProxy_ { nullptr };
+    BlueprintsSortProxy* bpSortProxy_ { nullptr };
+    BlueprintsColumnFilter* bpColumnFilter_ { nullptr };
 
     QAbstractProxyModel* bpLastModel_ { nullptr };
-    QVBoxLayout* filtersLayout;
     BlueprintsFilterBoxWidget* filterBox;
-    QAbstractItemModel* makeBlueprintsListModel();
-    void installBpProxy(QAbstractProxyModel* model);
 
   private slots:
     void setBpModelColorized(bool colorized);

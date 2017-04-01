@@ -7,8 +7,7 @@
 #include "blueprintlist.h"
 
 BlueprintsSortProxy::BlueprintsSortProxy(QObject* parent) :
-  QSortFilterProxyModel(parent),
-  type_(Name)
+  QSortFilterProxyModel(parent)
 {
 
 }
@@ -73,4 +72,10 @@ int BlueprintsSortProxy::type() const
 void BlueprintsSortProxy::setType(int type)
 {
   type_ = type;
+}
+
+
+void BlueprintsSortProxy::sort(int column)
+{
+  QSortFilterProxyModel::sort(column, order_);
 }

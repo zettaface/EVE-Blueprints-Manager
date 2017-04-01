@@ -62,22 +62,11 @@ void AssetTree::loadFromMemory()
 
   eve::ApiKeyList* keys = eve::API.keys();
 
-//  if (keys->rowCount(QModelIndex()) == 1) {
-//    AssetNode* root = loadAssetTree(keys->key(0));
-//    if (root->childs.isEmpty())
-//      return;
-
-//    for (AssetNode* locNode : root->childs) {
-//      locations.append(locNode);
-//    }
-//  }
-//  else {
   for (eve::ApiKeyInfo* key : *keys) {
     AssetNode* root = loadAssetTree(key);
     if (root)
       locations.append(root);
   }
-//  }
 
   endResetModel();
 
@@ -504,48 +493,6 @@ bool AssetTree::setData(const QModelIndex& index, const QVariant& value, int rol
   } else
     return QAbstractItemModel::setData(index, value, role);
 }
-
-//void AssetTree::insertFilter(AssetNode* node)
-//{
-//  auto list = getChildNodeSelectedIDs(node);
-//  QVariantList locIDs;
-
-//  for (auto& pair : list) {
-//    locIDs << pair.second;
-//  }
-
-//  QSqlDatabase db = QSqlDatabase::database(":memory:");
-//  QSqlQuery q(db);
-
-//  q.prepare(QString("INSERT OR IGNORE INTO BlueprintsFilter VALUES (?, %1)").arg(node->keyID));
-//  q.addBindValue(locIDs);
-
-//  if (!q.execBatch()) {
-//    qDebug() << "Filter insertion error -" << q.lastError();
-//  }
-
-//}
-
-//void AssetTree::removeFilter(AssetTree::AssetNode* node)
-//{
-//  auto list = getChildNodeSelectedIDs(node);
-//  QVariantList locIDs;
-
-//  for (auto& pair : list) {
-//    locIDs << pair.second;
-//  }
-
-//  QSqlDatabase db = QSqlDatabase::database(":memory:");
-//  QSqlQuery q(db);
-
-//  q.prepare(QString("DELETE FROM BlueprintsFilter WHERE locationID=? AND keyID=%1").arg(node->keyID));
-//  q.addBindValue(locIDs);
-
-//  if (!q.execBatch()) {
-//    qDebug() << "Filter remove error -" << q.lastError();
-//  }
-
-//}
 
 bool AssetTree::isChanged() const
 {
