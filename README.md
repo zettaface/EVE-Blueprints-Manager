@@ -7,7 +7,7 @@ EVE Blueprints Manager is a tool for EVE Online industrialists which should help
   - Flexible filtering/colorization system
   - Bonus: minerals to compressed ore calculator
 
-![Main window](http://i.imgur.com/wUceNtD.png)
+![Main window](http://i.imgur.com/B9MQnOS.png)
 
 ## Dependencies
   - Qt >= 5.6
