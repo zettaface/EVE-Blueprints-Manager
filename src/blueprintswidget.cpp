@@ -371,6 +371,9 @@ void BlueprintsWidget::saveFilter()
   BpFilterFactory factory;
   QString fileName = QFileDialog::getSaveFileName(this, "Save filter", "", "YAML(*.yaml)");
 
+  if (fileName.isEmpty())
+    return;
+
   std::ofstream yOut(QString("%1.yaml").arg(fileName.split(".").at(0)).toStdString());
   yOut << factory.saveFiltersAsYaml(filterBox->filter());
 }
@@ -379,6 +382,10 @@ void BlueprintsWidget::loadFilter()
 {
   BpFilterFactory factory;
   QString fileName = QFileDialog::getOpenFileName(this, "Open filter", "", "YAML(*.yaml)");
+
+  if (fileName.isEmpty())
+    return;
+
   QSharedPointer<BpFilter> ptr = factory.loadFilters(YAML::LoadFile(fileName.toStdString()));
 
   if (ptr.isNull())
