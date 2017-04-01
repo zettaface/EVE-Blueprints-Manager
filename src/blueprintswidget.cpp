@@ -79,8 +79,16 @@ BlueprintsWidget::BlueprintsWidget(QWidget* parent) : QWidget(parent)
   middleBlockL->addWidget(makeBPGroupBox());
 //  middleBlockL->addSpacerItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-  bpConfigL->addLayout(leftBlockL);
-  bpConfigL->addLayout(middleBlockL);
+  QHBoxLayout* leftMiddleHUnionL = new QHBoxLayout;
+
+  leftMiddleHUnionL->addLayout(leftBlockL);
+  leftMiddleHUnionL->addLayout(middleBlockL);
+
+  QVBoxLayout* leftMiddleVUnionL = new QVBoxLayout;
+  leftMiddleVUnionL->addLayout(leftMiddleHUnionL);
+  leftMiddleVUnionL->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+  bpConfigL->addLayout(leftMiddleVUnionL);
   bpConfigL->addWidget(filtersGroupBox);
 
   QWidget* bpConfigCont = new QWidget(this);
