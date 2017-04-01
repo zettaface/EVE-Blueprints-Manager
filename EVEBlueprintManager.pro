@@ -1,4 +1,3 @@
-
 QT       += core network xml gui sql concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TEMPLATE = app
@@ -12,6 +11,9 @@ INCLUDEPATH += "C:/libs/yamlf/include/"
 
 win32:RC_ICONS = images/Icon_32.ico
 ICON = images/Icon_64.icns
+
+VERSION = 0.1.1
+DEFINES += APP_VERSION_STR=\\\"$$VERSION\\\"
 
 SOURCES += \
     src/main.cpp \

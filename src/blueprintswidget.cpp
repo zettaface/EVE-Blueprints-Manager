@@ -244,14 +244,9 @@ QVBoxLayout* BlueprintsWidget::makeOptionsBoxesLayout(QGroupBox* sortGroupBox, Q
   sortOptionsLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Minimum));
   sortOptionsLayout->setStretch(2, 5);
 
-//  QVBoxLayout* middleBlockL = new QVBoxLayout;
-//  middleBlockL->setMargin(0);
-//  middleBlockL->addWidget(groupingBox);
-
   QHBoxLayout* hUnion = new QHBoxLayout;
   hUnion->addLayout(sortOptionsLayout);
   hUnion->addWidget(groupingBox);
-//  hUnion->addLayout(middleBlockL);
 
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addLayout(hUnion);

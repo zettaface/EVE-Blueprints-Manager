@@ -82,7 +82,9 @@ void MainWindow::buildMenu()
   });
 
   const QString aboutText = tr(
-                              "<b>EVE Blueprint Manager ver. 0.1</b><br/><br/>"
+                              "<b>EVE Blueprint Manager ver. "
+                              APP_VERSION_STR
+                              "</b><br/><br/>"
                               "For any questions post me ingame mail on Anna Spade<br/><br/>"
                               "The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE "
                               "WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.<br/><br/>"
