@@ -98,11 +98,19 @@ ApiKeyInsertDialog::ApiKeyPage::ApiKeyPage(QWidget* parent) :
   QWizardPage(parent)
 {
   setTitle(tr("API key"));
-  setSubTitle(tr("Api key information here"));
+
+
+
+  QString message  = tr("Your API keys available <a href=\"https://community.eveonline.com/support/api-key/\">here</a><br/>"
+                        "You can create predefined API key "
+                        "<a href=\"https://community.eveonline.com/support/api-key/createpredefined?accessmask=134283394\" >here</a>");
+  QLabel* infoLabel = new QLabel(message, this);
+  infoLabel->setOpenExternalLinks(true);
 
   keyLabel = new QLabel("Key ID:", this);
   keyEdit = new QLineEdit(this);
   keyLabel->setBuddy(keyEdit);
+  serverMessage_ = new QLabel(this);
 
   vCodeLabel = new QLabel("Verification code:", this);
   vCodeEdit = new QLineEdit(this);
@@ -113,8 +121,10 @@ ApiKeyInsertDialog::ApiKeyPage::ApiKeyPage(QWidget* parent) :
   registerField("keys", this, "keylist");
 
   QFormLayout* l = new QFormLayout(this);
+  l->addRow(infoLabel);
   l->addRow(keyLabel, keyEdit);
   l->addRow(vCodeLabel, vCodeEdit);
+  l->addRow(serverMessage_);
 }
 
 bool ApiKeyInsertDialog::ApiKeyPage::validatePage()
@@ -138,6 +148,9 @@ bool ApiKeyInsertDialog::ApiKeyPage::validatePage()
     splash.show();
     loop.exec();
     setEnabled(true);
+
+    if (parser->error() > 0)
+      serverMessage_->setText(parser->errorString());
   }
 
   if (_keylist.empty())

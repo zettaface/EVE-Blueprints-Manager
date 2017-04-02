@@ -42,6 +42,7 @@ class ApiKeyInsertDialog::ApiKeyPage : public QWizardPage
     QLabel* vCodeLabel;
     QLineEdit* keyEdit;
     QLineEdit* vCodeEdit;
+    QLabel* serverMessage_;
 
     QList<eve::ApiKeyInfo*> _keylist;
 };

@@ -27,8 +27,9 @@ void KeyInfoXmlParser::parse(QByteArray& xml, Request* req)
       if (reader.name() == "error") {
         errorCode_ = reader.attributes().value("code").toInt();
         errorString_ = reader.readElementText();
-        return;
+        break;
       }
+
       if (reader.name() == "key") {
         QXmlStreamAttributes attr = reader.attributes();
         type = attr.value("type").toString();
