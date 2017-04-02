@@ -56,7 +56,7 @@ void KeyInfoXmlParser::parse(QByteArray& xml, Request* req)
     for (auto key : keys_)
       delete key;
 
-    qDebug() << reader.errorString();
+    qWarning() << reader.errorString();
     keys_.clear();
   }
 

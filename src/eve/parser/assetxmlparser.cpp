@@ -108,7 +108,7 @@ void AssetXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   }
 
   if (reader.hasError()) {
-    qDebug() << "XML Parsing error -" << reader.errorString();
+    qWarning() << "XML Parsing error -" << reader.errorString();
     return;
   }
 
@@ -117,7 +117,7 @@ void AssetXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   db.transaction();
 
   if (!q.exec(QString("DELETE FROM Assets WHERE keyID=%1").arg(key->ID()))) {
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
     return;
   }
 
@@ -133,7 +133,7 @@ void AssetXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   q.addBindValue(singletons);
 
   if (!q.execBatch())
-    qDebug() << "VALUES INSERTION ERROR -" << q.lastError();
+    qWarning() << "VALUES INSERTION ERROR -" << q.lastError();
 
   const QString updateKeyQuery = "UPDATE OR IGNORE CacheTimes "
                                  "SET assets=:Time "
@@ -147,17 +147,17 @@ void AssetXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   q.bindValue(":keyID", key->ID());
 
   if (!q.exec())
-    qDebug() << "Update asset cache timer error -" << q.lastError();
+    qWarning() << "Update asset cache timer error -" << q.lastError();
 
   q.prepare(insertKeyQuery);
   q.bindValue(":Time", cachedUntil.toString(Qt::ISODate));
   q.bindValue(":keyID", key->ID());
 
   if (!q.exec())
-    qDebug() << "Update asset cache timer error -" << q.lastError();
+    qWarning() << "Update asset cache timer error -" << q.lastError();
 
   if (!db.commit()) {
-    qDebug() << "Transaction commit error -" << db.lastError();
+    qWarning() << "Transaction commit error -" << db.lastError();
     db.rollback();
   }
 

@@ -51,18 +51,18 @@ void ConquerableStationXmlParser::parseInternal(const QByteArray& xml, ApiKeyInf
   }
 
   if (reader.hasError()) {
-    qDebug() << reader.errorString();
+    qWarning() << reader.errorString();
     return;
   }
 
   QSqlQuery q(db);
   if (!db.transaction()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     return;
   }
 
   if (!q.exec(QString("DELETE FROM ConquerableStations")))
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   q.prepare(QString("INSERT OR IGNORE INTO ConquerableStations VALUES (?, ?, ?, ?, ?)"));
   q.addBindValue(stationIDs);
@@ -72,10 +72,10 @@ void ConquerableStationXmlParser::parseInternal(const QByteArray& xml, ApiKeyInf
   q.addBindValue(corporationIDs);
 
   if (!q.execBatch())
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   if (!db.commit()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     db.rollback();
   }
 }

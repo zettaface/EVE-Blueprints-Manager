@@ -64,7 +64,7 @@ void LocationsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
 
   QSqlQuery q(db);
   if (!db.transaction()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     return;
   }
 

@@ -73,18 +73,18 @@ void IndustryJobsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key
   }
 
   if (reader.hasError()) {
-    qDebug() << reader.errorString();
+    qWarning() << reader.errorString();
     return;
   }
 
   QSqlQuery q(db);
   if (!db.transaction()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     return;
   }
 
   if (!q.exec(QString("DELETE FROM IndustryJobs WHERE keyID=%1").arg(key->ID())))
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   q.prepare(QString("INSERT OR IGNORE INTO IndustryJobs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, %1)").arg(key->ID()));
 
@@ -106,7 +106,7 @@ void IndustryJobsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key
   q.addBindValue(completedDates);
 
   if (!q.execBatch())
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
 
   const QString updateKeyQuery = "UPDATE OR IGNORE CacheTimes "
@@ -121,18 +121,16 @@ void IndustryJobsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key
   q.bindValue(":keyID", key->ID());
 
   if (!q.exec())
-    qDebug() << "Update bp cache time error -" << q.lastError();
+    qWarning() << "Update bp cache time error -" << q.lastError();
 
   q.prepare(insertKeyQuery);
   q.bindValue(":Time", cachedUntil.toString(Qt::ISODate));
   q.bindValue(":keyID", key->ID());
 
   if (!db.commit()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     db.rollback();
   }
-
-  qDebug() << "Jobs parsed";
 }
 
 } // namespace eve

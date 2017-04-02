@@ -55,18 +55,18 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   }
 
   if (reader.hasError()) {
-    qDebug() << reader.errorString();
+    qWarning() << reader.errorString();
     return;
   }
 
   QSqlQuery q(db);
   if (!db.transaction()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     return;
   }
 
   if (!q.exec(QString("DELETE FROM Blueprints WHERE keyID=%1").arg(key->ID())))
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   q.prepare(QString("INSERT OR IGNORE INTO Blueprints VALUES (?, ?, ?, ?, ?, ?, ?, %1)").arg(key->ID()));
   q.addBindValue(itemIDs);
@@ -78,7 +78,7 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   q.addBindValue(runs);
 
   if (!q.execBatch())
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   const QString updateKeyQuery = "UPDATE OR IGNORE CacheTimes "
                                  "SET blueprints=:Time "
@@ -92,7 +92,7 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   q.bindValue(":keyID", key->ID());
 
   if (!q.exec())
-    qDebug() << "Update bp cache time error -" << q.lastError();
+    qWarning() << "Update bp cache time error -" << q.lastError();
 
   q.prepare(insertKeyQuery);
   q.bindValue(":Time", cachedUntil.toString(Qt::ISODate));
@@ -100,14 +100,12 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
 
 
   if (!q.exec())
-    qDebug() << q.lastError();
+    qWarning() << q.lastError();
 
   if (!db.commit()) {
-    qDebug() << db.lastError();
+    qWarning() << db.lastError();
     db.rollback();
   }
-
-  qDebug() << "Blueprints for " << key->ID() << " parsed";
 }
 
 } // namespace eve
