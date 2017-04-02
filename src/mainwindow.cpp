@@ -146,6 +146,9 @@ void MainWindow::updateStatusMessage()
 
 void MainWindow::updateApi()
 {
+  if (eve::API.keys()->size() == 0)
+    return;
+
   UpdateApiKeysDialog keyUpdateDialog;
   keyUpdateDialog.exec();
 

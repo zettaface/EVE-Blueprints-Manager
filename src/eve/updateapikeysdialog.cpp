@@ -12,16 +12,26 @@ UpdateApiKeysDialog::UpdateApiKeysDialog(QWidget* parent) :
   setWindowTitle("Checking keys");
   QLabel* label = new QLabel("Checking API keys", this);
   progress_ = new QProgressBar(this);
-  progress_->setRange(0, eve::API.keys()->size());
 
   QVBoxLayout* l = new QVBoxLayout(this);
   l->addWidget(label);
   l->addWidget(progress_);
+}
+
+int UpdateApiKeysDialog::exec()
+{
+  int keysToCheck = eve::API.keys()->size();
+  if (keysToCheck == 0)
+    return QDialog::Rejected;
+
+  progress_->setRange(0, keysToCheck);
 
   updater_ = QSharedPointer<eve::ApiKeyUpdater>::create();
 
   connect(updater_.data(), &eve::ApiKeyUpdater::parsed, this, &UpdateApiKeysDialog::onKeyParseComplete);
   eve::API.updateApiKeys(updater_);
+
+  return QDialog::exec();
 }
 
 void UpdateApiKeysDialog::keyPressEvent(QKeyEvent* event)

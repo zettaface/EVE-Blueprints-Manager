@@ -14,6 +14,9 @@ class UpdateApiKeysDialog : public QDialog
     explicit UpdateApiKeysDialog(QWidget* parent = nullptr);
     QVector<eve::ApiKeyUpdater::Error> expiredKeys() const { return updater_->expiredKeys(); }
 
+  public slots:
+    int exec() override;
+
   protected:
     void keyPressEvent(QKeyEvent* event) override;
 
