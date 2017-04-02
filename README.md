@@ -1,13 +1,20 @@
 # EVE-Blueprints-Manager
-![Main window](http://i.imgur.com/wUceNtD.png)
 
 ## What is it?
 
 EVE Blueprints Manager is a tool for EVE Online industrialists which should help to organize their blueprints. Open source and written in Qt C++.
+  - Compact list of all your blueprints
+  - Flexible filtering/colorization system
+  - Bonus: minerals to compressed ore calculator
+
+![Main window](http://i.imgur.com/B9MQnOS.png)
 
 ## Dependencies
   - Qt >= 5.6
   - [yaml-cpp] >= 0.5.3
+  
+## Beta Notice
+EVE Blueprints Manager is Beta. This means that  it is ready for public use, but may still contain some bugs.
 
 ## License
 
