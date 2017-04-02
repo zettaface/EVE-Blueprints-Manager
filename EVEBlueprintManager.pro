@@ -6,8 +6,7 @@ CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LFLAGS_RELEASE += -static -static-libgcc
 
-LIBS += -L"C:/libs/yamlf" -lyaml-cpp
-INCLUDEPATH += "C:/libs/yamlf/include/"
+LIBS += -lyaml-cpp
 
 win32:RC_ICONS = images/Icon_32.ico
 ICON = images/Icon_64.icns

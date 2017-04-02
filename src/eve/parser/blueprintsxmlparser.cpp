@@ -80,7 +80,6 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
   if (!q.execBatch())
     qDebug() << q.lastError();
 
-  QSqlQuery qcache(db);
   const QString updateKeyQuery = "UPDATE OR IGNORE CacheTimes "
                                  "SET blueprints=:Time "
                                  "WHERE keyID=:keyID";
@@ -107,6 +106,7 @@ void BlueprintsXmlParser::parseInternal(const QByteArray& xml, ApiKeyInfo* key)
     qDebug() << db.lastError();
     db.rollback();
   }
+
   qDebug() << "Blueprints for " << key->ID() << " parsed";
 }
 
