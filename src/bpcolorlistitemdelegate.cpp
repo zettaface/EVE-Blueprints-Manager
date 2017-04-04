@@ -96,6 +96,7 @@ class EditorDialog : public QDialog
 
       QVBoxLayout* l = new QVBoxLayout(this);
       l->addWidget(editor);
+      l->addSpacerItem(new QSpacerItem(0,0,QSizePolicy::Minimum, QSizePolicy::Expanding));
       l->addWidget(line);
       l->addWidget(buttonBox);
     }
