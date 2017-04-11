@@ -12,6 +12,7 @@ EVE Blueprints Manager is a tool for EVE Online industrialists which should help
 ## Dependencies
   - Qt >= 5.6
   - [yaml-cpp] >= 0.5.3
+  - EVE SDE SQLite ([fuzzwork](https://www.fuzzwork.co.uk/dump/))
   
 ## Beta Notice
 EVE Blueprints Manager is Beta. This means that  it is ready for public use, but may still contain some bugs.
